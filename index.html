@@ -67,14 +67,14 @@
 				text-shadow: 0px 0px 10px #ff4c0d, 0px 0px 10px #ff4c0d, 0px 0px 10px #ff4c0d;
 				/* for brighter shadow */
 				z-index: 1;
-				transition: all 150ms ease;
+				transition: opacity 150ms ease;
 			}
 			
 			#fadeout {
 				position: absolute;
 				top: 0;
 				left: 0;
-				transition: all 900ms ease;
+				transition: opacity 900ms ease;
 				z-index: 0;
 			}
 			.letter.fd {
@@ -104,7 +104,7 @@
 				padding: 1vmin;
 				display: inline-block;
 				opacity:0.5;
-				transition: all 100ms ease;
+				transition: opacity 100ms ease;
 				cursor: pointer;
 			}
 			.button:hover { opacity: 0.9; } 
@@ -174,31 +174,6 @@
 					document.getElementById("fadeout").style.opacity = 0;
 				},1);
 				
-				/*
-				setTimeout(function() {
-					var lamps = document.getElementsByClassName("new");
-					for (i=0, sz=lamps.length; i<sz; i++) {
-						lamps[i].style.opacity = 1;
-					}
-				},1);
-				
-				setTimeout(function() {
-					var lamps = document.getElementsByClassName("new");
-					for (i=0, sz=lamps.length; i<sz; i++) {
-						lamps[i].style.color = "#fffa07";
-					}
-				},40);
-				
-				
-				setTimeout(function(){
-					var lamps = document.getElementsByClassName("letter");
-					for (i=0, sz=lamps.length; i<sz; i++) {
-						if (lamps[i].classList.contains("new") == false) continue;
-						lamps[i].classList.remove("new");
-					}
-				},50);
-				*/
-				
 				fadeout_timer = setTimeout(function() {
 					document.getElementById('fadeout').innerHTML = "";
 				},900);
@@ -221,7 +196,7 @@
 			function randomDiv() {
 				clearInterval(time_timer);
 				time_timer = null;
-				var div = "0." + Math.floor(Math.random()*999999);
+				var div = Math.floor(Math.random()*1.5) + "." + Math.floor(Math.random()*999999);
 				while (div.length < 8) div += "0";
 				generateDivergence(div);
 			}
