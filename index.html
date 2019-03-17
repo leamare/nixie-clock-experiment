@@ -13,6 +13,10 @@
 				font-family: Futurica;
 				src: url(FUTU_LT.TTF);
 			}
+			@font-face {
+				font-family: BONX-AltMedium;
+				src: url(BONX-AltMedium.otf);
+			}
 			@keyframes flicker {
 				0% { opacity: 0.8; }
 				50% { opacity: 1; }
@@ -55,15 +59,15 @@
 			}
 			.regular.letter {
 				position: relative;
-				top: 28px;
+				top: 38px;
 				display: inline-block;
 				width: 94px;
 				line-height: 176px;
-				font-family: Nixie, Futurica;
-				font-size: 104px;
+				font-family: BONX-AltMedium, Nixie, Futurica;
+				font-size: 142px;
 				color: #fffa07;
 				text-align: center;
-				-webkit-transform: scaleY(1.42);
+				-webkit-transform: scaleY(1.05);
 				text-shadow: 0px 0px 10px #ff4c0d, 0px 0px 10px #ff4c0d, 0px 0px 10px #ff4c0d;
 				/* for brighter shadow */
 				z-index: 1;
@@ -113,7 +117,7 @@
 				color: #fffa07;
 				position: fixed;
 				top:0;left:0;
-				font-family: sans-serif;
+				font-family: BONX-AltMedium, Nixie, Futurica, sans-serif;
 				z-index:20;
 			}
 			.button {
@@ -255,14 +259,14 @@
 			<div id="dmeter-container">
 				<div id="dmeter" style="width: 752px;">
 					<div id="divergence" style="width: 752px;">
-						<div class="letter an">0</div>
-						<div class="empty-letter an">.</div>
-						<div class="letter an">4</div>
-						<div class="letter an">0</div>
-						<div class="letter an">9</div>
-						<div class="letter an">0</div>
-						<div class="letter an">3</div>
-						<div class="letter an">1</div>
+						<div class="regular letter an">0</div>
+						<div class="empty letter an">.</div>
+						<div class="regular letter an">4</div>
+						<div class="regular letter an">0</div>
+						<div class="regular letter an">9</div>
+						<div class="regular letter an">0</div>
+						<div class="regular letter an">3</div>
+						<div class="regular letter an">1</div>
 					</div>
 				</div>
 			</div>
