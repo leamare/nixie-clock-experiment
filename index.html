@@ -68,6 +68,18 @@
 				/* for brighter shadow */
 				z-index: 1;
 				transition: opacity 150ms ease;
+				vertical-align: top;
+			}
+			.empty-letter {
+				position: relative;
+				top: 0px;
+				display: inline-block;
+				width: 94px;
+				height: 256px;
+				text-align: center;
+				z-index: 1;
+				transition: opacity 150ms ease;
+				background-image: url(dmeter_dot.png);
 			}
 			
 			#fadeout {
@@ -77,7 +89,7 @@
 				transition: opacity 900ms ease;
 				z-index: 0;
 			}
-			.letter.fd {
+			.letter.fd, .empty-letter.fd {
 				color: #fffa0744;
 				opacity: 0.8;
 			}
@@ -148,17 +160,21 @@
 				var old_lamps = document.getElementsByClassName("letter");
 				
 				for (i=0, sz=old_lamps.length; i<lamps && i<sz; i++) {
-					fadeout += "<div class=\"fd letter\">";
-					if (typeof old_lamps[i] !== 'undefined' && old_lamps[i].innerHTML[0] != text[i])
+          if(old_lamps[i].innerHTML !== '')
+            fadeout += "<div class=\"fd letter\">";
+          else {
+            fadeout += "<div class=\"fd empty-letter\">";
+            old_lamps[i].innerHTML = '.';
+          }
+					if (old_lamps[i] !== undefined && old_lamps[i].innerHTML[0] != text[i])
 						fadeout += old_lamps[i].innerHTML[0];
 					fadeout += "</div>";
 				}
 
 				for (i=0; i<lamps; i++) {
-					//if (typeof old_lamps[i] !== 'undefined' && old_lamps[i].innerHTML[0] != text[i])
-					//	out += "<div class=\"letter new\">"+text[i]+"</div>";
-					//else
-					out += "<div class=\"letter an\">"+text[i]+"</div>";
+          if (text[i] === '.')
+            out += `<div class="empty-letter an"></div>`;
+					else out += `<div class="letter an">${text[i]}</div>`;
 				}
 				
 				
