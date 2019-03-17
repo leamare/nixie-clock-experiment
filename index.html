@@ -53,7 +53,7 @@
 				word-spacing: 0px;
 				position: relative;
 			}
-			.letter {
+			.regular.letter {
 				position: relative;
 				top: 28px;
 				display: inline-block;
@@ -70,8 +70,9 @@
 				transition: opacity 150ms ease;
 				vertical-align: top;
 			}
-			.empty-letter {
+			.empty.letter {
 				position: relative;
+				color: rgba(0,0,0,0);
 				top: 0px;
 				display: inline-block;
 				width: 94px;
@@ -89,8 +90,11 @@
 				transition: opacity 900ms ease;
 				z-index: 0;
 			}
-			.letter.fd, .empty-letter.fd {
+			.letter.fd {
 				color: #fffa0744;
+				opacity: 0.8;
+			}
+			.empty-letter.fd {
 				opacity: 0.8;
 			}
 			.new {
@@ -160,21 +164,17 @@
 				var old_lamps = document.getElementsByClassName("letter");
 				
 				for (i=0, sz=old_lamps.length; i<lamps && i<sz; i++) {
-          if(old_lamps[i].innerHTML !== '')
-            fadeout += "<div class=\"fd letter\">";
-          else {
-            fadeout += "<div class=\"fd empty-letter\">";
-            old_lamps[i].innerHTML = '.';
-          }
-					if (old_lamps[i] !== undefined && old_lamps[i].innerHTML[0] != text[i])
+          if(old_lamps[i].innerHTML === '.')
+            fadeout += "<div class=\"fd empty letter\">";
+          else
+            fadeout += "<div class=\"fd regular letter\">";
+					if (typeof old_lamps[i] !== 'undefined' && old_lamps[i].innerHTML[0] != text[i])
 						fadeout += old_lamps[i].innerHTML[0];
 					fadeout += "</div>";
 				}
 
 				for (i=0; i<lamps; i++) {
-          if (text[i] === '.')
-            out += `<div class="empty-letter an"></div>`;
-					else out += `<div class="letter an">${text[i]}</div>`;
+          out += `<div class="${text[i] === '.' ? 'empty' : 'regular'} letter an">${text[i]}</div>`;
 				}
 				
 				
@@ -242,7 +242,7 @@
 			
 		</script>
 	</head>
-	<body>
+	<body onload="randomDiv();">
 		<div id="buttons">
 			<div class="button" id="random-gen" onclick="randomDiv()" >Random</div>
 			<div class="button" id="text-gen" onclick="textDiv() " >Text</div>
@@ -256,7 +256,7 @@
 				<div id="dmeter" style="width: 752px;">
 					<div id="divergence" style="width: 752px;">
 						<div class="letter an">0</div>
-						<div class="letter an">.</div>
+						<div class="empty-letter an">.</div>
 						<div class="letter an">4</div>
 						<div class="letter an">0</div>
 						<div class="letter an">9</div>
