@@ -1,275 +1,260 @@
 <html>
-	<head>
-		<title>Nixie experiment</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<!-- Global site tag (gtag.js) - Google Analytics --> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-110962593-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-110962593-1'); </script>
-		
-		<style>
-			@font-face {
-				font-family: Nixie;
-				src: url(NixieOne-Regular.otf);
-			}
-			@font-face {
-				font-family: Futurica;
-				src: url(FUTU_LT.TTF);
-			}
-			@font-face {
-				font-family: BONX-AltMedium;
-				src: url(BONX-AltMedium.otf);
-			}
-			@keyframes flicker {
-				0% { opacity: 0.8; }
-				50% { opacity: 1; }
-				100% { opacity: 0.8; }
-			}
-			body {
-				margin: 0;
-				padding: 0;
-				height: 100%;
-				min-height: 300px;
-				min-width: 1000px;
-				background-color: #000;
-			}
-			#dmeter-container-container {
-				height: 100%;
-				width: 100%;
-				display: table;
-				position: relative;
-			}
-			#dmeter-container {
-				top: 50%;
-				display: table-cell;
-				vertical-align: middle;
-			}
-			#dmeter {
-				position: relative;
-				top: -50%;
-				
-				height: 200px;
-				margin: 0 auto;
-
-			}
-			#divergence {
-				font-size: 0;
-				height: 256px;
-				background: url('dmeter.png') repeat-x;
-				letter-spacing: -4px;
-				word-spacing: 0px;
-				position: relative;
-			}
-			.regular.letter {
-				position: relative;
-				top: 38px;
-				display: inline-block;
-				width: 94px;
-				line-height: 176px;
-				font-family: BONX-AltMedium, Nixie, Futurica;
-				font-size: 142px;
-				color: #fffa07;
-				text-align: center;
-				-webkit-transform: scaleY(1.05);
-				text-shadow: 0px 0px 10px #ff4c0d, 0px 0px 10px #ff4c0d, 0px 0px 10px #ff4c0d;
-				/* for brighter shadow */
-				z-index: 1;
-				transition: opacity 150ms ease;
-				vertical-align: top;
-			}
-			.empty.letter {
-				position: relative;
-				color: rgba(0,0,0,0);
-				top: 0px;
-				display: inline-block;
-				width: 94px;
-				height: 256px;
-				text-align: center;
-				z-index: 1;
-				transition: opacity 150ms ease;
-				background-image: url(dmeter_dot.png);
-			}
-			
-			#fadeout {
-				position: absolute;
-				top: 0;
-				left: 0;
-				transition: opacity 900ms ease;
-				z-index: 0;
-			}
-			.letter.fd {
-				color: #fffa0744;
-				opacity: 0.8;
-			}
-			.empty-letter.fd {
-				opacity: 0.8;
-			}
-			.new {
-				opacity: 0.4;
-				color:#fff;
-			}
-			
-			.an {
-				animation-name: flicker;
-				animation-duration: 400ms;
-				animation-iteration-count: infinite;
-			}
-			
-			#buttons {
-				font-size: 2vmin;
-				color: #fffa07;
-				position: fixed;
-				top:0;left:0;
-				font-family: BONX-AltMedium, Nixie, Futurica, sans-serif;
-				z-index:20;
-			}
-			.button {
-				padding: 1vmin;
-				display: inline-block;
-				opacity:0.5;
-				transition: opacity 100ms ease;
-				cursor: pointer;
-			}
-			.button:hover { opacity: 0.9; } 
-			
-			/* @media all  {
-				.letter {
-					width: 11.75vmin;
-					line-height: 22.9vmin;
-					font-size: 13vmin;
-				} 
-			} */
-		</style>
-		<script>
-			var fadeout_timer = null;
-			var time_timer = null;
-			var time_flicker = true;
-			
-			function nixieclock() {
-				var time = new Date();
-				var str = "";
-				if(time_flicker) time_flicker = false;
-				else time_flicker = true;
-				
-				str = " ." + ( time.getHours() < 10 ? "0"+time.getHours() : time.getHours())
-						+ (time_flicker ? ":" : " ") +
-						( time.getMinutes() < 10 ? "0"+time.getMinutes() : time.getMinutes())
-						+ (time_flicker ? ":" : " ") +
-						( time.getSeconds() < 10 ? "0"+time.getSeconds() : time.getSeconds());
-				generateDivergence(str);
-					
-				}
-		
-			function generateDivergence(text) {
-				var out = "";
-				var lamps;
-				
-				if (window.innerWidth/100 < text.length) lamps = Math.floor(window.innerWidth/100);
-				else lamps = text.length;
-				
-				var fadeout = "";
-				var old_lamps = document.getElementsByClassName("letter");
-				
-				for (i=0, sz=old_lamps.length; i<lamps && i<sz; i++) {
+  <head>
+    <title>Nixie experiment</title>
+    <meta name="viewport" content="width=1300, initial-scale=0.5">
+    <!-- Global site tag (gtag.js) - Google Analytics --> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-110962593-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-110962593-1'); </script>
+    
+    <style>
+      @font-face {
+        font-family: Nixie;
+        src: url(NixieOne-Regular.otf);
+      }
+      @font-face {
+        font-family: Futurica;
+        src: url(FUTU_LT.TTF);
+      }
+      @font-face {
+        font-family: BONX-AltMedium;
+        src: url(BONX-AltMedium.otf);
+      }
+      @keyframes flicker {
+        0% { opacity: 0.8; }
+        50% { opacity: 1; }
+        100% { opacity: 0.8; }
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        min-width: 1000px;
+        background-color: #000;
+      }
+      #dmeter-container-container {
+      }
+      #dmeter-container {
+        height:100vh;
+        overflow: auto;
+      }
+      #divergence {
+        top: calc(50vh - 15vmin);
+        font-size: 0;
+        height: 30vmin;
+        background: url('dmeter.png') repeat-x;
+        background-size: auto 30vmin;
+        word-spacing: 0px;
+        position: relative;
+        margin: 0 auto;
+      }
+      .regular.letter {
+        position: relative;
+        top: 4.3vmin;
+        display: inline-block;
+        width: 11.0vmin;
+        line-height: 20.6vmin;
+        font-family: BONX-AltMedium, Nixie, Futurica;
+        font-size: 16.3vmin;
+        color: #fffa07;
+        text-align: center;
+        -webkit-transform: scaleY(1.02);
+        text-shadow: 0px 0px 10px #ff4c0d, 0px 0px 10px #ff4c0d, 0px 0px 10px #ff4c0d;
+        /* for brighter shadow */
+        z-index: 1;
+        /* transition: opacity 150ms ease; */
+        vertical-align: top;
+      }
+      .empty.letter {
+        position: relative;
+        color: rgba(0,0,0,0);
+        top: 0px;
+        display: inline-block;
+        width: 11vmin;
+        height: 30vmin;
+        text-align: center;
+        z-index: 1;
+        transition: opacity 150ms ease;
+        background-image: url(dmeter_dot.png);
+        background-size: auto 30vmin;
+      }
+      
+      #fadeout {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: opacity 1200ms ease;
+        z-index: 0;
+      }
+      .letter.fd {
+        color: #fffa0744;
+        opacity: 0.8;
+      }
+      .empty-letter.fd {
+        opacity: 0.8;
+      }
+      .new {
+        opacity: 0.4;
+        color:#fff;
+      }
+      
+      .an {
+        animation-name: flicker;
+        animation-duration: 400ms;
+        animation-iteration-count: infinite;
+      }
+      
+      #buttons {
+        font-size: 2.3vh;
+        color: #ffca07;
+        position: fixed;
+        top:0;left:0;
+        font-family: BONX-AltMedium, Nixie, Futurica, sans-serif;
+        z-index:20;
+      }
+      .button {
+        padding: 1vmin;
+        display: inline-block;
+        opacity:0.5;
+        transition: opacity 100ms ease;
+        cursor: pointer;
+      }
+      .button:hover { opacity: 0.9; } 
+      
+      /* @media all  {
+        .letter {
+          width: 11.75vmin;
+          line-height: 22.9vmin;
+          font-size: 13vmin;
+        } 
+      } */
+    </style>
+    <script>
+      var fadeout_timer = null;
+      var time_timer = null;
+      var time_flicker = true;
+      
+      function nixieclock() {
+        var time = new Date();
+        var str = "";
+        if(time_flicker) time_flicker = false;
+        else time_flicker = true;
+        
+        str = " ." + ( time.getHours() < 10 ? "0"+time.getHours() : time.getHours())
+            + (time_flicker ? ":" : " ") +
+            ( time.getMinutes() < 10 ? "0"+time.getMinutes() : time.getMinutes())
+            + (time_flicker ? ":" : " ") +
+            ( time.getSeconds() < 10 ? "0"+time.getSeconds() : time.getSeconds());
+        generateDivergence(str);
+          
+        }
+    
+      function generateDivergence(text) {
+        var out = "";
+        var lamps;
+        
+        if (window.innerWidth/100 < text.length) lamps = Math.floor(window.innerWidth/100);
+        else lamps = text.length;
+        
+        var fadeout = "";
+        var old_lamps = document.getElementsByClassName("letter");
+        
+        for (i=0, sz=old_lamps.length; i<lamps && i<sz; i++) {
           if(old_lamps[i].innerHTML === '.')
             fadeout += "<div class=\"fd empty letter\">";
           else
             fadeout += "<div class=\"fd regular letter\">";
-					if (typeof old_lamps[i] !== 'undefined' && old_lamps[i].innerHTML[0] != text[i])
-						fadeout += old_lamps[i].innerHTML[0];
-					fadeout += "</div>";
-				}
+          if (typeof old_lamps[i] !== 'undefined' && old_lamps[i].innerHTML[0] != text[i])
+            fadeout += old_lamps[i].innerHTML[0];
+          fadeout += "</div>";
+        }
 
-				for (i=0; i<lamps; i++) {
+        for (i=0; i<lamps; i++) {
           out += `<div class="${text[i] === '.' ? 'empty' : 'regular'} letter an">${text[i]}</div>`;
-				}
-				
-				
-				out += "<div id=\"fadeout\">"+fadeout+"</div>";
+        }
+        
+        
+        out += "<div id=\"fadeout\">"+fadeout+"</div>";
 
-				if (lamps < 8) lamps = 8;
-				
-				document.getElementById("divergence").innerHTML = out;
-				document.getElementById("divergence").style.width = (lamps*94) + "px";
-				document.getElementById("dmeter").style.width = (lamps*94) + "px";
-				
-				setTimeout(function() {
-					document.getElementById("fadeout").style.opacity = 0;
-				},1);
-				
-				fadeout_timer = setTimeout(function() {
-					document.getElementById('fadeout').innerHTML = "";
-				},900);
-			}
-			function textDiv() {
-				var old = "";
-				if(document.getElementById("fadeout") != null)
-					var cnt = document.getElementById("fadeout").childNodes.length;
-				else var cnt = 0;
-				var lamps = document.getElementsByClassName("letter");
-				for (i=0, sz=lamps.length-cnt; i<sz; i++)
-					old += lamps[i].innerHTML;
-				var text = prompt("Enter text:",old);
-				if (text != null) {
-					generateDivergence(text);
-					clearInterval(time_timer);
-					time_timer = null;
-				}
-			}
-			function randomDiv() {
-				clearInterval(time_timer);
-				time_timer = null;
-				var div = Math.floor(Math.random()*1.5) + "." + Math.floor(Math.random()*999999);
-				while (div.length < 8) div += "0";
-				generateDivergence(div);
-			}
-			function dateDiv() {
-				var time = new Date();
-				var str = "";
-				str = (time.getMonth()+1) + "." + time.getDate() + "." + time.getFullYear();
-				clearInterval(time_timer);
-				time_timer = null;
-				generateDivergence(str);
-			}
-			function keyhandler(e) {
-				var key = e.keyCode;
-				if (key == 83) {
-					textDiv();
-				} else if (key == 65) {
-					randomDiv();
-				} else if (key == 68) {
-					dateDiv() ;
-				} else if (key == 70) {
-					nixieclock();
-					if(time_timer == null)
-						time_timer = setInterval(function() {nixieclock();}, 1000);
-				}
-			}
-			document.onkeyup = keyhandler;
-			
-		</script>
-	</head>
-	<body onload="randomDiv();">
-		<div id="buttons">
-			<div class="button" id="random-gen" onclick="randomDiv()" >Random</div>
-			<div class="button" id="text-gen" onclick="textDiv() " >Text</div>
-			<div class="button" id="date-gen" onclick="dateDiv() " >Date</div>
-			<div class="button" id="clock" onclick="nixieclock();
-					if(time_timer == null)
-						time_timer = setInterval(function() {nixieclock();}, 1000);" >Clock</div>
-		</div>
-		<div id="dmeter-container-container">
-			<div id="dmeter-container">
-				<div id="dmeter" style="width: 752px;">
-					<div id="divergence" style="width: 752px;">
-						<div class="regular letter an">0</div>
-						<div class="empty letter an">.</div>
-						<div class="regular letter an">4</div>
-						<div class="regular letter an">0</div>
-						<div class="regular letter an">9</div>
-						<div class="regular letter an">0</div>
-						<div class="regular letter an">3</div>
-						<div class="regular letter an">1</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</body>
+        if (lamps < 8) lamps = 8;
+        
+        document.getElementById("divergence").innerHTML = out;
+        document.getElementById("divergence").style.width = (lamps*11) + "vmin";
+        
+        setTimeout(function() {
+          document.getElementById("fadeout").style.opacity = 0;
+        },1);
+        
+        fadeout_timer = setTimeout(function() {
+          document.getElementById('fadeout').innerHTML = "";
+        },900);
+      }
+      function textDiv() {
+        var old = "";
+        if(document.getElementById("fadeout") != null)
+          var cnt = document.getElementById("fadeout").childNodes.length;
+        else var cnt = 0;
+        var lamps = document.getElementsByClassName("letter");
+        for (i=0, sz=lamps.length-cnt; i<sz; i++)
+          old += lamps[i].innerHTML;
+        var text = prompt("Enter text:",old);
+        if (text != null) {
+          generateDivergence(text);
+          clearInterval(time_timer);
+          time_timer = null;
+        }
+      }
+      function randomDiv() {
+        clearInterval(time_timer);
+        time_timer = null;
+        var div = Math.floor(Math.random()*1.5) + "." + Math.floor(Math.random()*999999);
+        while (div.length < 8) div += "0";
+        generateDivergence(div);
+      }
+      function dateDiv() {
+        var time = new Date();
+        var str = "";
+        str = (time.getMonth()+1) + "." + time.getDate() + "." + time.getFullYear();
+        clearInterval(time_timer);
+        time_timer = null;
+        generateDivergence(str);
+      }
+      function keyhandler(e) {
+        var key = e.keyCode;
+        if (key == 83) {
+          textDiv();
+        } else if (key == 65) {
+          randomDiv();
+        } else if (key == 68) {
+          dateDiv() ;
+        } else if (key == 70) {
+          nixieclock();
+          if(time_timer == null)
+            time_timer = setInterval(function() {nixieclock();}, 1000);
+        }
+      }
+      document.onkeyup = keyhandler;
+      
+    </script>
+  </head>
+  <body onload="randomDiv();">
+    <div id="buttons">
+      <div class="button" id="random-gen" onclick="randomDiv()" >Random</div>
+      <div class="button" id="text-gen" onclick="textDiv() " >Text</div>
+      <div class="button" id="date-gen" onclick="dateDiv() " >Date</div>
+      <div class="button" id="clock" onclick="nixieclock();
+          if(time_timer == null)
+            time_timer = setInterval(function() {nixieclock();}, 1000);" >Clock</div>
+    </div>
+    <div id="dmeter-container-container">
+      <div id="dmeter-container">
+          <div id="divergence" style="width: 752px;">
+            <div class="regular letter an">0</div>
+            <div class="empty letter an">.</div>
+            <div class="regular letter an">4</div>
+            <div class="regular letter an">0</div>
+            <div class="regular letter an">9</div>
+            <div class="regular letter an">0</div>
+            <div class="regular letter an">3</div>
+            <div class="regular letter an">1</div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
