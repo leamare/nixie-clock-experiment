@@ -1,6 +1,6 @@
 # Nixie Divergence Meter Experiment
 
-A thing I did for Kagaku Adventure fan blog.
+A thing I did for Kagaku Adventure fan blog (in ~2014-2016? not sure).
 
 It is inspired by divergence meter in the Steins;Gate series.
 
