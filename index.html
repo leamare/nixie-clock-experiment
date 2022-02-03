@@ -166,7 +166,9 @@
         if(time_flicker) time_flicker = false;
         else time_flicker = true;
 
-        const remaining = countdown - currentDate;
+        const remaining = (countdown > currentDate)
+          ? countdown - currentDate
+          : 0;
         
         const days = Math.floor(remaining / (60 * 60 * 24));
         const hours = Math.floor((remaining % (60 * 60 * 24)) / (60 * 60));
@@ -181,6 +183,10 @@
             + (time_flicker ? ":" : " ") +
             ( seconds < 10 ? "0"+seconds : seconds);
         generateDivergence(str);
+
+        if (!remaining) {
+          if (time_timer) clearInterval(time_timer);
+        }
       }
     
       function generateDivergence(text) {
@@ -238,8 +244,7 @@
           date = ( Date.parse(text) / 1000 ).toFixed();
           const now = ( (new Date()).getTime() / 1000 ).toFixed();
           if (date < now) {
-            randomDiv();
-            return;
+            date = now;
           }
 
           window.location.hash = '#countdown='+date;
@@ -301,7 +306,7 @@
         const hashParams = getHashParams();
 
         const currentDate = ( (new Date()).getTime() / 1000 ).toFixed();
-        if (+hashParams.countdown && hashParams.countdown > currentDate) {
+        if (+hashParams.countdown) {
           nixiecountdown(hashParams.countdown);
           if(time_timer == null) {
             globalCountdown = hashParams.countdown;
