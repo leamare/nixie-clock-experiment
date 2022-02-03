@@ -2,7 +2,6 @@
   <head>
     <title>Nixie experiment</title>
     <meta name="viewport" content="width=1300, initial-scale=0.5">
-    <!-- Global site tag (gtag.js) - Google Analytics --> <script async src="https://www.googletagmanager.com/gtag/js?id=UA-110962593-1"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-110962593-1'); </script>
     
     <style>
       @font-face {
@@ -129,6 +128,21 @@
       var fadeout_timer = null;
       var time_timer = null;
       var time_flicker = true;
+      var globalCountdown = null;
+
+      function getHashParams() {
+        var hashParams = {};
+        var e,
+            a = /\+/g,  // Regex for replacing addition symbol with a space
+            r = /([^&;=]+)=?([^&;]*)/g,
+            d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+            q = window.location.hash.substring(1);
+
+        while (e = r.exec(q))
+          hashParams[d(e[1])] = d(e[2]);
+
+        return hashParams;
+      }
       
       function nixieclock() {
         var time = new Date();
@@ -142,8 +156,32 @@
             + (time_flicker ? ":" : " ") +
             ( time.getSeconds() < 10 ? "0"+time.getSeconds() : time.getSeconds());
         generateDivergence(str);
-          
-        }
+      }
+
+      function nixiecountdown(countdown) {
+        countdown = countdown || globalCountdown;
+
+        const currentDate = ( (new Date()).getTime() / 1000 ).toFixed();
+        var str = "";
+        if(time_flicker) time_flicker = false;
+        else time_flicker = true;
+
+        const remaining = countdown - currentDate;
+        
+        const days = Math.floor(remaining / (60 * 60 * 24));
+        const hours = Math.floor((remaining % (60 * 60 * 24)) / (60 * 60));
+        const minutes = Math.floor((remaining % (60 * 60)) / (60));
+        const seconds = Math.floor(remaining % (60));
+
+        str = ( days < 10 ? "0"+days : days)
+            + (time_flicker ? " ." : "  ") +
+            ( hours < 10 ? "0"+hours : hours)
+            + (time_flicker ? ":" : " ") +
+            ( minutes < 10 ? "0"+minutes : minutes)
+            + (time_flicker ? ":" : " ") +
+            ( seconds < 10 ? "0"+seconds : seconds);
+        generateDivergence(str);
+      }
     
       function generateDivergence(text) {
         var out = "";
@@ -185,6 +223,34 @@
           document.getElementById('fadeout').innerHTML = "";
         },900);
       }
+      function askDateForCountdown() {
+        let old, date;
+
+        if (globalCountdown) {
+          date = new Date(globalCountdown * 1000);
+        } else {
+          date = new Date();
+        }
+        old = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        
+        var text = prompt("Enter countdown date:", old);
+        if (text != null) {
+          date = ( Date.parse(text) / 1000 ).toFixed();
+          const now = ( (new Date()).getTime() / 1000 ).toFixed();
+          if (date < now) {
+            randomDiv();
+            return;
+          }
+
+          window.location.hash = '#countdown='+date;
+          
+          nixiecountdown(date);
+          if (time_timer) clearInterval(time_timer);
+          
+          globalCountdown = date;
+          time_timer = setInterval(function() {nixiecountdown();}, 1000);
+        }
+      }
       function textDiv() {
         var old = "";
         if(document.getElementById("fadeout") != null)
@@ -225,15 +291,33 @@
           dateDiv() ;
         } else if (key == 70) {
           nixieclock();
-          if(time_timer == null)
-            time_timer = setInterval(function() {nixieclock();}, 1000);
+          if (time_timer) clearInterval(time_timer);
+          time_timer = setInterval(function() {nixieclock();}, 1000);
+        } else if (key == 71) {
+          askDateForCountdown();
         }
       }
+      function preload() {
+        const hashParams = getHashParams();
+
+        const currentDate = ( (new Date()).getTime() / 1000 ).toFixed();
+        if (+hashParams.countdown && hashParams.countdown > currentDate) {
+          nixiecountdown(hashParams.countdown);
+          if(time_timer == null) {
+            globalCountdown = hashParams.countdown;
+            time_timer = setInterval(function() {nixiecountdown();}, 1000);
+          }
+          return;
+        }
+
+        randomDiv();
+      }
+      
       document.onkeyup = keyhandler;
       
     </script>
   </head>
-  <body onload="randomDiv();">
+  <body onload="preload();">
     <div id="buttons">
       <div class="button" id="random-gen" onclick="randomDiv()" >Random</div>
       <div class="button" id="text-gen" onclick="textDiv() " >Text</div>
@@ -241,6 +325,7 @@
       <div class="button" id="clock" onclick="nixieclock();
           if(time_timer == null)
             time_timer = setInterval(function() {nixieclock();}, 1000);" >Clock</div>
+      <div class="button" id="date-gen" onclick="askDateForCountdown() " >Countdown</div>
     </div>
     <div id="dmeter-container-container">
       <div id="dmeter-container">
